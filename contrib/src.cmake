@@ -138,6 +138,24 @@ if (SOLOUD_BACKEND_COREAUDIO)
 	)
 endif()
 
+if (SOLOUD_BACKEND_ALSA)
+	find_package (ALSA REQUIRED)
+	include_directories (${ALSA_INCLUDE_DIR})
+	add_definitions (-DWITH_ALSA)
+
+	message({${ALSA_LIBRARY})
+	set (BACKENDS_SOURCES
+			${BACKENDS_SOURCES}
+			${BACKENDS_PATH}/alsa/soloud_alsa.cpp
+			)
+
+	set (LINK_LIBRARIES
+			${LINK_LIBRARIES}
+			${ALSA_LIBRARY}
+			pthread
+			)
+endif()
+
 if (SOLOUD_BACKEND_PORTAUDIO)
 	find_package (Portaudio REQUIRED)
 	add_definitions (
