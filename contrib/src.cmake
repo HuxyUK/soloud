@@ -147,13 +147,12 @@ if (SOLOUD_BACKEND_ALSA)
 	set (BACKENDS_SOURCES
 			${BACKENDS_SOURCES}
 			${BACKENDS_PATH}/alsa/soloud_alsa.cpp
-			)
+	)
 
 	set (LINK_LIBRARIES
 			${LINK_LIBRARIES}
 			${ALSA_LIBRARY}
-			pthread
-			)
+	)
 endif()
 
 if (SOLOUD_BACKEND_PORTAUDIO)
@@ -172,7 +171,7 @@ if (SOLOUD_BACKEND_PORTAUDIO)
 	set (LINK_LIBRARIES
 		${LINK_LIBRARIES}
 		${PORTAUDIO_LIBRARIES}
-		dl
+		dl #TODO support static and local builds of portaudio
 	)
 endif()
 
@@ -247,10 +246,14 @@ set (TARGET_SOURCES
 )
 
 if (SOLOUD_DYNAMIC)
+	set(BUILD_SHARED_LIBS true)
+	SET(CMAKE_SKIP_BUILD_RPATH  true)
+	set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 	add_library(${TARGET_NAME} ${TARGET_SOURCES})
 endif ()
 
 if (SOLOUD_STATIC)
+	set(BUILD_SHARED_LIBS false)
 	add_library(${TARGET_NAME} STATIC ${TARGET_SOURCES})
 endif()
 
