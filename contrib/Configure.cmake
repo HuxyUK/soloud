@@ -20,6 +20,12 @@ print_option_status (SOLOUD_BACKEND_SDL2 "SDL2 backend")
 option (SOLOUD_BACKEND_COREAUDIO "Set to ON for building CoreAudio backend" OFF)
 print_option_status (SOLOUD_BACKEND_COREAUDIO "CoreAudio backend")
 
+option (SOLOUD_BACKEND_ALSA "Set to ON for building ALSA backend" OFF)
+print_option_status (SOLOUD_BACKEND_ALSA "ALSA backend")
+
+option (SOLOUD_BACKEND_PORTAUDIO "Set to ON for building PortAudio backend" ON)
+print_option_status (SOLOUD_BACKEND_PORTAUDIO "PortAudio backend")
+
 option (SOLOUD_BACKEND_OPENSLES "Set to ON for building OpenSLES backend" OFF)
 print_option_status (SOLOUD_BACKEND_OPENSLES "OpenSLES backend")
 
