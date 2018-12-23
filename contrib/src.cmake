@@ -156,6 +156,7 @@ if (SOLOUD_BACKEND_ALSA)
 endif()
 
 if (SOLOUD_BACKEND_PORTAUDIO)
+	INCLUDE(cmake/PortAudio.cmake)
 	find_package (Portaudio REQUIRED)
 	add_definitions (
 			${PORTAUDIO_DEFINITIONS}
