@@ -1,6 +1,6 @@
 [submodule "ext/libmodplug"]
 	path = ext/libmodplug
 	url = https://github.com/jarikomppa/libmodplug.git
-[submodule "extern/PortAudio"]
-	path = extern/PortAudio
+[submodule "ext/PortAudio"]
+	path = ext/PortAudio
 	url = https://git.assembla.com/portaudio.git
