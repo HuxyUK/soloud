@@ -4,6 +4,7 @@ project (SoLoud)
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
+set (CMAKE_DEBUG_POSTFIX d)
 #INCLUDE (StandartIncludes)
 
 include_directories (../include)
