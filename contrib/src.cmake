@@ -195,6 +195,10 @@ if (SOLOUD_BACKEND_WINMM)
 	set (BACKENDS_SOURCES
 			${BACKENDS_SOURCES}
 			${BACKENDS_PATH}/winmm/soloud_winmm.cpp)
+
+	set (LINK_LIBRARIES
+			${LINK_LIBRARIES}
+			winmm)
 endif()
 
 if (SOLOUD_BACKEND_WASAPI)
