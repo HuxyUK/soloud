@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from shutil import copyfile
 import os
 import glob
@@ -44,6 +45,7 @@ sources = [
 "bin/audio/rainy_ambience.ogg",
 "bin/audio/ted_storm.prg.dump",
 "bin/audio/tetsno.ogg",
+"bin/audio/delphi_loop.ogg",
 "bin/audio/war_loop.ogg",
 "bin/audio/windy_ambience.ogg",
 "bin/audio/wavformats/ch1.flac",
@@ -368,7 +370,22 @@ sources = [
 "src/tools/tedsid2dump/tedplay.cpp",
 "src/tools/tedsid2dump/tedplay.h",
 "src/tools/tedsid2dump/tedsound.cpp",
-"src/tools/tedsid2dump/types.h"
+"src/tools/tedsid2dump/types.h",
+"demos/megademo/annex.cpp",
+"demos/megademo/filterfolio.cpp",
+"demos/piano/RtMidi.cpp",
+"demos/piano/RtMidi.h",
+"src/audiosource/noise/soloud_noise.cpp",
+"src/audiosource/tedsid/readme.txt",
+"src/backend/jack/soloud_jack.cpp",
+"src/backend/miniaudio/miniaudio.h",
+"src/backend/miniaudio/soloud_miniaudio.cpp",
+"src/backend/nosound/soloud_nosound.cpp",
+"src/core/soloud_misc.cpp",
+"src/filter/soloud_freeverbfilter.cpp",
+"include/soloud_freeverbfilter.h",
+"include/soloud_misc.h",
+"include/soloud_noise.h"
 ]
 
 notfound = []
@@ -380,17 +397,28 @@ def missingfiles(globpath):
         x=x.replace('\\','/')
         if os.path.isfile(x):
             if x[len(root):] not in sources:        
-                #print x, "not in sources"
+                #print(x, "not in sources")
                 if stringindemos(x[x.rfind("/")+1:]):
                     notfound.append(x)
         else:
             missingfiles(x+"/*")
+
+def missingsources(globpath):
+    global notfound
+    for x in glob.glob(globpath):    
+        if os.path.isfile(x):
+            if x[-4:] not in [".bak", ".pyc", ".dll"] :
+                x=x.replace('\\','/')
+                if x[len(root):] not in sources:        
+                    notfound.append(x)
+        else:
+            missingsources(x+"/*")
     
 
 def checkfile(findstring, fname):
     """ Checks whether the string can be found in a file """
     if findstring in open(fname).read():
-        #print findstring, "found in", fname
+        #print(findstring, "found in", fname)
         return True
     return False
 
@@ -410,7 +438,7 @@ def checkuse(findstring):
 
 def agecheck(fname):
     age = (time.time()-os.path.getmtime(fname)) / (60*60*24)
-    #print fname, "is", age, "days old."
+    #print(fname, "is", age, "days old.")
     if age > 1:
         notfound.append(fname)
 
@@ -420,42 +448,39 @@ def agecheck(fname):
 
 for x in sources:
     if not os.path.isfile(root+x):
-        print root+x, "not found, is the root",root,"correct?"
+        print(root+x, "not found, is the root",root,"correct?")
         exit()
     
-print "All listed files exist."
-
-#    
-# Check that all of the listed assets are referenced in demos
-#    
-
-for x in sources:
-    if "bin/audio" in x or "bin/graphics" in x:
-        checkuse(x[x.rfind("/")+1:])
- 
-if len(notfound) > 0:
-    print "Data files not found in any of the demo sources:"
-    for x in notfound:
-        print x
-    exit()
-
-print "All listed assets can be found in at least one demo source."
+print("All listed files exist.")
 
 #
 # Verify that there are no new assets that are referenced in the demos
 # but not listed for release
 #
 
+missingsources(root+"demos/*")
+missingsources(root+"include/*")
+missingsources(root+"src/audiosource/*")
+missingsources(root+"src/backend/*")
+missingsources(root+"src/core/*")
+missingsources(root+"src/filter/*")
+
+if len(notfound) > 0:
+    print("Source files/directories found, but not in the list; edit makerel.py or remove them:")
+    for x in notfound:
+        print(x)
+    exit()
+
 missingfiles(root+"bin/audio/*")
 missingfiles(root+"bin/graphics/*")
 
 if len(notfound) > 0:
-    print "Data files found in directory and sources, but not in the list:"
+    print("Data files found in directory and source files, but not in the list:")
     for x in notfound:
-        print x
+        print(x)
     exit()
 
-print "No unlisted, used data files found."
+print("No unlisted, used data files found.")
 
 #
 # Age check all exe, dll and glue files
@@ -466,12 +491,28 @@ for x in sources:
         agecheck(root+x)
 
 if len(notfound) > 0:
-    print "Following files are too old (older than 1 day):"
+    print("Following files are too old (older than 1 day):")
     for x in notfound:
-        print x
+        print(x)
     exit()
 
-print "All prebuilt binaries are fresh enough."
+print("All prebuilt binaries are fresh enough.")
+
+#    
+# Check that all of the listed assets are referenced in demos
+#    
+
+for x in sources:
+    if "bin/audio" in x or "bin/graphics" in x:
+        checkuse(x[x.rfind("/")+1:])
+ 
+if len(notfound) > 0:
+    print("Data files not found in any of the demo sources:")
+    for x in notfound:
+        print(x)
+    exit()
+
+print("All listed assets can be found in at least one demo source.")
 
 #
 # Target directory
@@ -481,14 +522,14 @@ datestring = time.strftime("%Y%m%d")
 targetdir = root + "rel/soloud" + datestring + "/"
 
 if os.path.exists(targetdir):
-    print "Target directory already exists."
+    print("Target directory already exists.")
     exit()
 
 #
 # Copy files
 #
 
-print "Copying minimal to", targetdir
+print("Copying minimal to", targetdir)
 
 for x in sources:
     if ("src/" in x
@@ -510,7 +551,7 @@ for x in sources:
 # Zip'em up
 #
 
-print "making","soloud"+datestring+"_lite.zip"
+print("making","soloud"+datestring+"_lite.zip")
 
 os.system("7z A -r -bd -tzip "+root+"rel/"+"soloud_"+datestring+"_lite.zip "+targetdir+" > 7z.log")
 
@@ -518,7 +559,7 @@ os.system("7z A -r -bd -tzip "+root+"rel/"+"soloud_"+datestring+"_lite.zip "+tar
 # Copy files
 #
 
-print "Copying all to", targetdir
+print("Copying all to", targetdir)
 
 for x in sources:    
     dst = targetdir+x
@@ -531,8 +572,8 @@ for x in sources:
 # Zip'em up
 #
 
-print "making","soloud"+datestring+".zip"
+print("making","soloud"+datestring+".zip")
 
 os.system("7z A -r -bd -tzip "+root+"rel/"+"soloud_"+datestring+".zip "+targetdir+" > 7z.log")
 
-print "All done."
+print("All done.")

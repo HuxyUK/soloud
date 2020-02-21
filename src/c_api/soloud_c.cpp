@@ -5,7 +5,7 @@
 
 /*
 SoLoud audio engine
-Copyright (c) 2013-2016 Jari Komppa
+Copyright (c) 2013-2020 Jari Komppa
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -27,7 +27,7 @@ freely, subject to the following restrictions:
    distribution.
 */
 
-/* SoLoud C-Api Code Generator (c)2013-2018 Jari Komppa http://iki.fi/sol/ */
+/* SoLoud C-Api Code Generator (c)2013-2020 Jari Komppa http://iki.fi/sol/ */
 
 #include "../include/soloud.h"
 #include "../include/soloud_audiosource.h"
@@ -41,8 +41,10 @@ freely, subject to the following restrictions:
 #include "../include/soloud_fftfilter.h"
 #include "../include/soloud_filter.h"
 #include "../include/soloud_flangerfilter.h"
+#include "../include/soloud_freeverbfilter.h"
 #include "../include/soloud_lofifilter.h"
 #include "../include/soloud_monotone.h"
+#include "../include/soloud_noise.h"
 #include "../include/soloud_openmpt.h"
 #include "../include/soloud_queue.h"
 #include "../include/soloud_robotizefilter.h"
@@ -694,20 +696,39 @@ void Soloud_mixSigned16(void * aClassPtr, short * aBuffer, unsigned int aSamples
 	cl->mixSigned16(aBuffer, aSamples);
 }
 
-void AudioAttenuator_destroy(void * aClassPtr)
-{
-  delete (AudioAttenuator *)aClassPtr;
-}
-
-float AudioAttenuator_attenuate(void * aClassPtr, float aDistance, float aMinDistance, float aMaxDistance, float aRolloffFactor)
-{
-	AudioAttenuator * cl = (AudioAttenuator *)aClassPtr;
-	return cl->attenuate(aDistance, aMinDistance, aMaxDistance, aRolloffFactor);
-}
-
 void BassboostFilter_destroy(void * aClassPtr)
 {
   delete (BassboostFilter *)aClassPtr;
+}
+
+int BassboostFilter_getParamCount(void * aClassPtr)
+{
+	BassboostFilter * cl = (BassboostFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * BassboostFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	BassboostFilter * cl = (BassboostFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int BassboostFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	BassboostFilter * cl = (BassboostFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float BassboostFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	BassboostFilter * cl = (BassboostFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float BassboostFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	BassboostFilter * cl = (BassboostFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
 }
 
 int BassboostFilter_setParams(void * aClassPtr, float aBoost)
@@ -726,15 +747,45 @@ void BiquadResonantFilter_destroy(void * aClassPtr)
   delete (BiquadResonantFilter *)aClassPtr;
 }
 
+int BiquadResonantFilter_getParamCount(void * aClassPtr)
+{
+	BiquadResonantFilter * cl = (BiquadResonantFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * BiquadResonantFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	BiquadResonantFilter * cl = (BiquadResonantFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int BiquadResonantFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	BiquadResonantFilter * cl = (BiquadResonantFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float BiquadResonantFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	BiquadResonantFilter * cl = (BiquadResonantFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float BiquadResonantFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	BiquadResonantFilter * cl = (BiquadResonantFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
+}
+
 void * BiquadResonantFilter_create()
 {
   return (void *)new BiquadResonantFilter;
 }
 
-int BiquadResonantFilter_setParams(void * aClassPtr, int aType, float aSampleRate, float aFrequency, float aResonance)
+int BiquadResonantFilter_setParams(void * aClassPtr, int aType, float aFrequency, float aResonance)
 {
 	BiquadResonantFilter * cl = (BiquadResonantFilter *)aClassPtr;
-	return cl->setParams(aType, aSampleRate, aFrequency, aResonance);
+	return cl->setParams(aType, aFrequency, aResonance);
 }
 
 void Bus_destroy(void * aClassPtr)
@@ -813,6 +864,12 @@ void Bus_setVisualizationEnable(void * aClassPtr, int aEnable)
 	cl->setVisualizationEnable(!!aEnable);
 }
 
+void Bus_annexSound(void * aClassPtr, unsigned int aVoiceHandle)
+{
+	Bus * cl = (Bus *)aClassPtr;
+	cl->annexSound(aVoiceHandle);
+}
+
 float * Bus_calcFFT(void * aClassPtr)
 {
 	Bus * cl = (Bus *)aClassPtr;
@@ -829,6 +886,12 @@ float Bus_getApproximateVolume(void * aClassPtr, unsigned int aChannel)
 {
 	Bus * cl = (Bus *)aClassPtr;
 	return cl->getApproximateVolume(aChannel);
+}
+
+unsigned int Bus_getActiveVoiceCount(void * aClassPtr)
+{
+	Bus * cl = (Bus *)aClassPtr;
+	return cl->getActiveVoiceCount();
 }
 
 void Bus_setVolume(void * aClassPtr, float aVolume)
@@ -937,9 +1000,69 @@ int DCRemovalFilter_setParamsEx(void * aClassPtr, float aLength)
 	return cl->setParams(aLength);
 }
 
+int DCRemovalFilter_getParamCount(void * aClassPtr)
+{
+	DCRemovalFilter * cl = (DCRemovalFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * DCRemovalFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	DCRemovalFilter * cl = (DCRemovalFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int DCRemovalFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	DCRemovalFilter * cl = (DCRemovalFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float DCRemovalFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	DCRemovalFilter * cl = (DCRemovalFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float DCRemovalFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	DCRemovalFilter * cl = (DCRemovalFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
+}
+
 void EchoFilter_destroy(void * aClassPtr)
 {
   delete (EchoFilter *)aClassPtr;
+}
+
+int EchoFilter_getParamCount(void * aClassPtr)
+{
+	EchoFilter * cl = (EchoFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * EchoFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	EchoFilter * cl = (EchoFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int EchoFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	EchoFilter * cl = (EchoFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float EchoFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	EchoFilter * cl = (EchoFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float EchoFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	EchoFilter * cl = (EchoFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
 }
 
 void * EchoFilter_create()
@@ -969,9 +1092,69 @@ void * FFTFilter_create()
   return (void *)new FFTFilter;
 }
 
+int FFTFilter_getParamCount(void * aClassPtr)
+{
+	FFTFilter * cl = (FFTFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * FFTFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	FFTFilter * cl = (FFTFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int FFTFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	FFTFilter * cl = (FFTFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float FFTFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	FFTFilter * cl = (FFTFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float FFTFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	FFTFilter * cl = (FFTFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
+}
+
 void FlangerFilter_destroy(void * aClassPtr)
 {
   delete (FlangerFilter *)aClassPtr;
+}
+
+int FlangerFilter_getParamCount(void * aClassPtr)
+{
+	FlangerFilter * cl = (FlangerFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * FlangerFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	FlangerFilter * cl = (FlangerFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int FlangerFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	FlangerFilter * cl = (FlangerFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float FlangerFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	FlangerFilter * cl = (FlangerFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float FlangerFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	FlangerFilter * cl = (FlangerFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
 }
 
 void * FlangerFilter_create()
@@ -985,9 +1168,85 @@ int FlangerFilter_setParams(void * aClassPtr, float aDelay, float aFreq)
 	return cl->setParams(aDelay, aFreq);
 }
 
+void FreeverbFilter_destroy(void * aClassPtr)
+{
+  delete (FreeverbFilter *)aClassPtr;
+}
+
+int FreeverbFilter_getParamCount(void * aClassPtr)
+{
+	FreeverbFilter * cl = (FreeverbFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * FreeverbFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	FreeverbFilter * cl = (FreeverbFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int FreeverbFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	FreeverbFilter * cl = (FreeverbFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float FreeverbFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	FreeverbFilter * cl = (FreeverbFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float FreeverbFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	FreeverbFilter * cl = (FreeverbFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
+}
+
+void * FreeverbFilter_create()
+{
+  return (void *)new FreeverbFilter;
+}
+
+int FreeverbFilter_setParams(void * aClassPtr, float aMode, float aRoomSize, float aDamp, float aWidth)
+{
+	FreeverbFilter * cl = (FreeverbFilter *)aClassPtr;
+	return cl->setParams(aMode, aRoomSize, aDamp, aWidth);
+}
+
 void LofiFilter_destroy(void * aClassPtr)
 {
   delete (LofiFilter *)aClassPtr;
+}
+
+int LofiFilter_getParamCount(void * aClassPtr)
+{
+	LofiFilter * cl = (LofiFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * LofiFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	LofiFilter * cl = (LofiFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int LofiFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	LofiFilter * cl = (LofiFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float LofiFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	LofiFilter * cl = (LofiFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float LofiFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	LofiFilter * cl = (LofiFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
 }
 
 void * LofiFilter_create()
@@ -1029,13 +1288,13 @@ int Monotone_load(void * aClassPtr, const char * aFilename)
 	return cl->load(aFilename);
 }
 
-int Monotone_loadMem(void * aClassPtr, unsigned char * aMem, unsigned int aLength)
+int Monotone_loadMem(void * aClassPtr, const unsigned char * aMem, unsigned int aLength)
 {
 	Monotone * cl = (Monotone *)aClassPtr;
 	return cl->loadMem(aMem, aLength);
 }
 
-int Monotone_loadMemEx(void * aClassPtr, unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
+int Monotone_loadMemEx(void * aClassPtr, const unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
 {
 	Monotone * cl = (Monotone *)aClassPtr;
 	return cl->loadMem(aMem, aLength, !!aCopy, !!aTakeOwnership);
@@ -1137,6 +1396,118 @@ void Monotone_stop(void * aClassPtr)
 	cl->stop();
 }
 
+void Noise_destroy(void * aClassPtr)
+{
+  delete (Noise *)aClassPtr;
+}
+
+void * Noise_create()
+{
+  return (void *)new Noise;
+}
+
+void Noise_setOctaveScale(void * aClassPtr, float aOct0, float aOct1, float aOct2, float aOct3, float aOct4, float aOct5, float aOct6, float aOct7, float aOct8, float aOct9)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setOctaveScale(aOct0, aOct1, aOct2, aOct3, aOct4, aOct5, aOct6, aOct7, aOct8, aOct9);
+}
+
+void Noise_setType(void * aClassPtr, int aType)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setType(aType);
+}
+
+void Noise_setVolume(void * aClassPtr, float aVolume)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setVolume(aVolume);
+}
+
+void Noise_setLooping(void * aClassPtr, int aLoop)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setLooping(!!aLoop);
+}
+
+void Noise_set3dMinMaxDistance(void * aClassPtr, float aMinDistance, float aMaxDistance)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dMinMaxDistance(aMinDistance, aMaxDistance);
+}
+
+void Noise_set3dAttenuation(void * aClassPtr, unsigned int aAttenuationModel, float aAttenuationRolloffFactor)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dAttenuation(aAttenuationModel, aAttenuationRolloffFactor);
+}
+
+void Noise_set3dDopplerFactor(void * aClassPtr, float aDopplerFactor)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dDopplerFactor(aDopplerFactor);
+}
+
+void Noise_set3dListenerRelative(void * aClassPtr, int aListenerRelative)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dListenerRelative(!!aListenerRelative);
+}
+
+void Noise_set3dDistanceDelay(void * aClassPtr, int aDistanceDelay)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dDistanceDelay(!!aDistanceDelay);
+}
+
+void Noise_set3dCollider(void * aClassPtr, AudioCollider * aCollider)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dCollider(aCollider);
+}
+
+void Noise_set3dColliderEx(void * aClassPtr, AudioCollider * aCollider, int aUserData)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dCollider(aCollider, aUserData);
+}
+
+void Noise_set3dAttenuator(void * aClassPtr, AudioAttenuator * aAttenuator)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->set3dAttenuator(aAttenuator);
+}
+
+void Noise_setInaudibleBehavior(void * aClassPtr, int aMustTick, int aKill)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setInaudibleBehavior(!!aMustTick, !!aKill);
+}
+
+void Noise_setLoopPoint(void * aClassPtr, double aLoopPoint)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setLoopPoint(aLoopPoint);
+}
+
+double Noise_getLoopPoint(void * aClassPtr)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	return cl->getLoopPoint();
+}
+
+void Noise_setFilter(void * aClassPtr, unsigned int aFilterId, Filter * aFilter)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->setFilter(aFilterId, aFilter);
+}
+
+void Noise_stop(void * aClassPtr)
+{
+	Noise * cl = (Noise *)aClassPtr;
+	cl->stop();
+}
+
 void Openmpt_destroy(void * aClassPtr)
 {
   delete (Openmpt *)aClassPtr;
@@ -1153,13 +1524,13 @@ int Openmpt_load(void * aClassPtr, const char * aFilename)
 	return cl->load(aFilename);
 }
 
-int Openmpt_loadMem(void * aClassPtr, unsigned char * aMem, unsigned int aLength)
+int Openmpt_loadMem(void * aClassPtr, const unsigned char * aMem, unsigned int aLength)
 {
 	Openmpt * cl = (Openmpt *)aClassPtr;
 	return cl->loadMem(aMem, aLength);
 }
 
-int Openmpt_loadMemEx(void * aClassPtr, unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
+int Openmpt_loadMemEx(void * aClassPtr, const unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
 {
 	Openmpt * cl = (Openmpt *)aClassPtr;
 	return cl->loadMem(aMem, aLength, !!aCopy, !!aTakeOwnership);
@@ -1402,31 +1773,45 @@ void RobotizeFilter_destroy(void * aClassPtr)
   delete (RobotizeFilter *)aClassPtr;
 }
 
+int RobotizeFilter_getParamCount(void * aClassPtr)
+{
+	RobotizeFilter * cl = (RobotizeFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * RobotizeFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	RobotizeFilter * cl = (RobotizeFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int RobotizeFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	RobotizeFilter * cl = (RobotizeFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float RobotizeFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	RobotizeFilter * cl = (RobotizeFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float RobotizeFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	RobotizeFilter * cl = (RobotizeFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
+}
+
+void RobotizeFilter_setParams(void * aClassPtr, float aFreq, int aWaveform)
+{
+	RobotizeFilter * cl = (RobotizeFilter *)aClassPtr;
+	cl->setParams(aFreq, aWaveform);
+}
+
 void * RobotizeFilter_create()
 {
   return (void *)new RobotizeFilter;
-}
-
-void Prg_destroy(void * aClassPtr)
-{
-  delete (Prg *)aClassPtr;
-}
-
-void * Prg_create()
-{
-  return (void *)new Prg;
-}
-
-unsigned int Prg_rand(void * aClassPtr)
-{
-	Prg * cl = (Prg *)aClassPtr;
-	return cl->rand();
-}
-
-void Prg_srand(void * aClassPtr, int aSeed)
-{
-	Prg * cl = (Prg *)aClassPtr;
-	cl->srand(aSeed);
 }
 
 void Sfxr_destroy(void * aClassPtr)
@@ -1705,13 +2090,13 @@ int TedSid_loadToMem(void * aClassPtr, const char * aFilename)
 	return cl->loadToMem(aFilename);
 }
 
-int TedSid_loadMem(void * aClassPtr, unsigned char * aMem, unsigned int aLength)
+int TedSid_loadMem(void * aClassPtr, const unsigned char * aMem, unsigned int aLength)
 {
 	TedSid * cl = (TedSid *)aClassPtr;
 	return cl->loadMem(aMem, aLength);
 }
 
-int TedSid_loadMemEx(void * aClassPtr, unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
+int TedSid_loadMemEx(void * aClassPtr, const unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
 {
 	TedSid * cl = (TedSid *)aClassPtr;
 	return cl->loadMem(aMem, aLength, !!aCopy, !!aTakeOwnership);
@@ -2065,13 +2450,13 @@ int Wav_load(void * aClassPtr, const char * aFilename)
 	return cl->load(aFilename);
 }
 
-int Wav_loadMem(void * aClassPtr, unsigned char * aMem, unsigned int aLength)
+int Wav_loadMem(void * aClassPtr, const unsigned char * aMem, unsigned int aLength)
 {
 	Wav * cl = (Wav *)aClassPtr;
 	return cl->loadMem(aMem, aLength);
 }
 
-int Wav_loadMemEx(void * aClassPtr, unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
+int Wav_loadMemEx(void * aClassPtr, const unsigned char * aMem, unsigned int aLength, int aCopy, int aTakeOwnership)
 {
 	Wav * cl = (Wav *)aClassPtr;
 	return cl->loadMem(aMem, aLength, !!aCopy, !!aTakeOwnership);
@@ -2226,15 +2611,39 @@ int WaveShaperFilter_setParams(void * aClassPtr, float aAmount)
 	return cl->setParams(aAmount);
 }
 
-int WaveShaperFilter_setParamsEx(void * aClassPtr, float aAmount, float aWet)
-{
-	WaveShaperFilter * cl = (WaveShaperFilter *)aClassPtr;
-	return cl->setParams(aAmount, aWet);
-}
-
 void * WaveShaperFilter_create()
 {
   return (void *)new WaveShaperFilter;
+}
+
+int WaveShaperFilter_getParamCount(void * aClassPtr)
+{
+	WaveShaperFilter * cl = (WaveShaperFilter *)aClassPtr;
+	return cl->getParamCount();
+}
+
+const char * WaveShaperFilter_getParamName(void * aClassPtr, unsigned int aParamIndex)
+{
+	WaveShaperFilter * cl = (WaveShaperFilter *)aClassPtr;
+	return cl->getParamName(aParamIndex);
+}
+
+unsigned int WaveShaperFilter_getParamType(void * aClassPtr, unsigned int aParamIndex)
+{
+	WaveShaperFilter * cl = (WaveShaperFilter *)aClassPtr;
+	return cl->getParamType(aParamIndex);
+}
+
+float WaveShaperFilter_getParamMax(void * aClassPtr, unsigned int aParamIndex)
+{
+	WaveShaperFilter * cl = (WaveShaperFilter *)aClassPtr;
+	return cl->getParamMax(aParamIndex);
+}
+
+float WaveShaperFilter_getParamMin(void * aClassPtr, unsigned int aParamIndex)
+{
+	WaveShaperFilter * cl = (WaveShaperFilter *)aClassPtr;
+	return cl->getParamMin(aParamIndex);
 }
 
 void WavStream_destroy(void * aClassPtr)
@@ -2253,13 +2662,13 @@ int WavStream_load(void * aClassPtr, const char * aFilename)
 	return cl->load(aFilename);
 }
 
-int WavStream_loadMem(void * aClassPtr, unsigned char * aData, unsigned int aDataLen)
+int WavStream_loadMem(void * aClassPtr, const unsigned char * aData, unsigned int aDataLen)
 {
 	WavStream * cl = (WavStream *)aClassPtr;
 	return cl->loadMem(aData, aDataLen);
 }
 
-int WavStream_loadMemEx(void * aClassPtr, unsigned char * aData, unsigned int aDataLen, int aCopy, int aTakeOwnership)
+int WavStream_loadMemEx(void * aClassPtr, const unsigned char * aData, unsigned int aDataLen, int aCopy, int aTakeOwnership)
 {
 	WavStream * cl = (WavStream *)aClassPtr;
 	return cl->loadMem(aData, aDataLen, !!aCopy, !!aTakeOwnership);

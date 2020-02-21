@@ -1,6 +1,6 @@
 /*
 SoLoud audio engine
-Copyright (c) 2013-2018 Jari Komppa
+Copyright (c) 2013-2020 Jari Komppa
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -88,24 +88,44 @@ namespace monotone
 		}
 		if (ImGui::CollapsingHeader("Waveform", (const char*)0, true, false))
 		{
-			if (ImGui::RadioButton("Square", waveform == SoLoud::Monotone::SQUARE))
+			if (ImGui::RadioButton("Square", waveform == SoLoud::Misc::WAVE_SQUARE))
 			{
-				waveform = SoLoud::Monotone::SQUARE;
+				waveform = SoLoud::Misc::WAVE_SQUARE;
 				gMusic.setParams(hwchannels, waveform);
 			}
-			if (ImGui::RadioButton("Saw", waveform == SoLoud::Monotone::SAW))
+			if (ImGui::RadioButton("Saw", waveform == SoLoud::Misc::WAVE_SAW))
 			{
-				waveform = SoLoud::Monotone::SAW;
+				waveform = SoLoud::Misc::WAVE_SAW;
 				gMusic.setParams(hwchannels, waveform);
 			}
-			if (ImGui::RadioButton("Sin", waveform == SoLoud::Monotone::SIN))
+			if (ImGui::RadioButton("Sin", waveform == SoLoud::Misc::WAVE_SIN))
 			{
-				waveform = SoLoud::Monotone::SIN;
+				waveform = SoLoud::Misc::WAVE_SIN;
 				gMusic.setParams(hwchannels, waveform);
 			}
-			if (ImGui::RadioButton("SawSin", waveform == SoLoud::Monotone::SAWSIN))
+			if (ImGui::RadioButton("Bounce", waveform == SoLoud::Misc::WAVE_BOUNCE))
 			{
-				waveform = SoLoud::Monotone::SAWSIN;
+				waveform = SoLoud::Misc::WAVE_BOUNCE;
+				gMusic.setParams(hwchannels, waveform);
+			}
+			if (ImGui::RadioButton("Jaws", waveform == SoLoud::Misc::WAVE_JAWS))
+			{
+				waveform = SoLoud::Misc::WAVE_JAWS;
+				gMusic.setParams(hwchannels, waveform);
+			}
+			if (ImGui::RadioButton("Humps", waveform == SoLoud::Misc::WAVE_HUMPS))
+			{
+				waveform = SoLoud::Misc::WAVE_HUMPS;
+				gMusic.setParams(hwchannels, waveform);
+			}
+			if (ImGui::RadioButton("Fourier square", waveform == SoLoud::Misc::WAVE_FSQUARE))
+			{
+				waveform = SoLoud::Misc::WAVE_FSQUARE;
+				gMusic.setParams(hwchannels, waveform);
+			}			
+			if (ImGui::RadioButton("Fourier saw", waveform == SoLoud::Misc::WAVE_FSAW))
+			{
+				waveform = SoLoud::Misc::WAVE_FSAW;
 				gMusic.setParams(hwchannels, waveform);
 			}
 		}
@@ -137,7 +157,7 @@ namespace monotone
 		gMusic.setParams(10);
 
 		gEcho.setParams(0.2f, 0.5f, 0.05f);
-		gBiquad.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 44100, 4000, 2);
+		gBiquad.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 4000, 2);
 
 		gMusic.setLooping(1);
 		gMusic.setFilter(0, &gBiquad);
@@ -148,7 +168,7 @@ namespace monotone
 		gSoloud.init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION);
 
 		gMusichandle = gSoloud.play(gMusic);
-		waveform = SoLoud::Monotone::SAW;
+		waveform = SoLoud::Misc::WAVE_SAW;
 		gMusic.setParams(hwchannels, waveform);
 
 		return 0;
