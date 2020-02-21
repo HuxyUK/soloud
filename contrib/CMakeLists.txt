@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 
-project (SoLoud)
+project (SoLoud
+	 VERSION 20200207
+	 DESCRIPTION "Free, easy, portable audio engine for games")
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set (CMAKE_POSITION_INDEPENDENT_CODE ON)
