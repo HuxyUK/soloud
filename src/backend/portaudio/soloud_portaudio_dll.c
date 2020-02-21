@@ -73,7 +73,8 @@ static void *pta_getdllproc(HMODULE dllhandle, const char *procname)
 
 static void* pta_openDll()
 {
-    void* res = dlopen("libportaudio_x86.so", RTLD_LAZY);
+    // TODO this needs sorting, hard coded lib names :(
+    void* res = dlopen("libportaudio.so", RTLD_LAZY);
 
 //	if (!res) res = dlopen("/Library/Frameworks/PortAudio.framework", RTLD_LAZY);
 
