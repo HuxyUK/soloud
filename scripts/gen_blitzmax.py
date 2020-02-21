@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # BlitzMax wrapper generator
 # Thanks to James Boyd for help with this!
 
@@ -20,6 +21,7 @@ C_TO_BMX_TYPES = {
     "int":"Int",
     "void":"Int",
     "const char *":"Byte Ptr",
+    "const unsigned char *":"Byte Ptr",
     "unsigned int":"Int",
     "float":"Float",
     "double":"Double",
@@ -60,4 +62,4 @@ for x in soloud_codegen.soloud_func:
   fo.write(funcdef + "\n")
   
 fo.close()
-print "soloud.bmx generated"
+print("soloud.bmx generated")

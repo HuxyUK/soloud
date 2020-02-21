@@ -212,21 +212,23 @@ endif()
 # Filters
 set (FILTERS_PATH ${SOURCE_PATH}/filter)
 set (FILTERS_SOURCES
-		${FILTERS_PATH}/soloud_bassboostfilter.cpp
-		${FILTERS_PATH}/soloud_biquadresonantfilter.cpp
-		${FILTERS_PATH}/soloud_dcremovalfilter.cpp
-		${FILTERS_PATH}/soloud_echofilter.cpp
-		${FILTERS_PATH}/soloud_fftfilter.cpp
-		${FILTERS_PATH}/soloud_flangerfilter.cpp
-		${FILTERS_PATH}/soloud_lofifilter.cpp)
-
+   	 ${FILTERS_PATH}/soloud_bassboostfilter.cpp
+	   ${FILTERS_PATH}/soloud_biquadresonantfilter.cpp
+	   ${FILTERS_PATH}/soloud_dcremovalfilter.cpp
+	   ${FILTERS_PATH}/soloud_echofilter.cpp
+	   ${FILTERS_PATH}/soloud_fftfilter.cpp
+	   ${FILTERS_PATH}/soloud_flangerfilter.cpp
+	   ${FILTERS_PATH}/soloud_lofifilter.cpp
+	   ${FILTERS_PATH}/soloud_robotizefilter.cpp
+	   ${FILTERS_PATH}/soloud_waveshaperfilter.cpp
+)
 
 # All together
-source_group ("Includes"		FILES ${TARGET_HEADERS})
-source_group ("Core"			FILES ${CORE_SOURCES})
-source_group ("Audiosources"	FILES ${AUDIOSOURCES_SOURCES})
-source_group ("Backends"		FILES ${BACKENDS_SOURCES})
-source_group ("Filters"			FILES ${FILTERS_SOURCES})
+source_group ("Includes"		 FILES ${TARGET_HEADERS})
+source_group ("Core"			   FILES ${CORE_SOURCES})
+source_group ("Audiosources" FILES ${AUDIOSOURCES_SOURCES})
+source_group ("Backends"		 FILES ${BACKENDS_SOURCES})
+source_group ("Filters"			 FILES ${FILTERS_SOURCES})
 
 set (TARGET_SOURCES
 		${CORE_SOURCES}

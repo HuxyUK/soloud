@@ -1,6 +1,6 @@
 /*
 SoLoud audio engine
-Copyright (c) 2013-2018 Jari Komppa
+Copyright (c) 2013-2020 Jari Komppa
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -225,7 +225,7 @@ void testMisc()
 	CHECK_BUF_NONZERO(scratch, 2000);
 	CHECK_BUF_NONZERO(scratch_i16, 2000);
 
-	SoLoud::Prg prg;
+	SoLoud::Misc::Prg prg;
 	prg.srand(0x1337);
 	int a = prg.rand();
 	prg.srand(0x1337);
@@ -984,14 +984,14 @@ void testFilters()
 	CHECKLASTKNOWN(scratch, 2000);
 	CHECK_BUF_DIFF(ref, scratch, 2000);
 
-	biquad.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 8000, 2000, 5);
+	biquad.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 2000, 5);
 	wav.setFilter(0, &biquad);
 	soloud.play(wav);
 	soloud.mix(ref2, 1000);
 	CHECKLASTKNOWN(ref2, 2000);
 	CHECK_BUF_DIFF(ref, ref2, 2000);
 	soloud.stopAll();
-	biquad.setParams(SoLoud::BiquadResonantFilter::HIGHPASS, 8000, 1000, 5);
+	biquad.setParams(SoLoud::BiquadResonantFilter::HIGHPASS, 1000, 5);
 	soloud.play(wav);
 	soloud.mix(scratch, 1000);
 	CHECKLASTKNOWN(scratch, 2000);
@@ -1077,14 +1077,14 @@ void testFilters()
 	soloud.stopAll();
 	wav.setFilter(0, 0);
 
-	wshap.setParams(0.05f, 1);
+	wshap.setParams(0.05f);
 	wav.setFilter(0, &wshap);
 	soloud.play(wav);
 	soloud.mix(ref2, 1000);
 	CHECKLASTKNOWN(ref2, 2000);
 	CHECK_BUF_DIFF(ref, ref2, 2000);
 	soloud.stopAll();
-	wshap.setParams(0.005f, 1);
+	wshap.setParams(0.005f);
 	soloud.play(wav);
 	soloud.mix(scratch, 1000);
 	CHECKLASTKNOWN(scratch, 2000);
@@ -1471,6 +1471,10 @@ void testMixer()
 	soloud.deinit();
 }
 
+// 4.8 base
+// 5.1 disable_simd
+// 4.6 with DAZ/FTZ
+
 void testSpeedThings()
 {
 	float scratch[2048];
@@ -1482,6 +1486,7 @@ void testSpeedThings()
 	int j;
 	generateTestWave(wav);
 	int k;
+	long fst = getmsec();
 	for (k = 0; k < 10; k++)
 	{
 		long st = getmsec();
@@ -1498,6 +1503,8 @@ void testSpeedThings()
 		long et = getmsec();
 		printf("Mix loop took %3.3f sec\n", (et - st) / 1000.0f);
 	}
+	long fet = getmsec();
+	printf("Total %3.3f sec\n", (fet - fst) / 1000.0f);
 	soloud.deinit();
 }
 
@@ -1530,7 +1537,7 @@ int main(int parc, char ** pars)
 	testCore();
 	testSpeech();
 //	testSpeedThings();
-	//testMixer();
+//	testMixer();
 	printf("\n%d tests, %d error(s) ", tests, errorcount);
 	if (!lastknownwrite && errorcount)
 		printf("(To rebuild lastknown.wav, simply delete it)\n");

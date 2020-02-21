@@ -294,6 +294,7 @@ klatt::klatt() :
 	mGlotLast(0),
 	mDecay(0),
 	mOneMd(0),
+	mSeed(5),
 	mElementCount(0),
 	mElement(0),
 	mElementIndex(0),
@@ -806,7 +807,7 @@ int klatt::phone_to_elm(char *aPhoneme, int aCount, darray *aElement)
     than internal i.e. ext != 0 if 'a' is NOT current element.
  */
 
-static void set_trans(Slope *t, Element * a, Element * b,int ext, int e)
+static void set_trans(Slope *t, Element * a, Element * b,int ext, int /* e */)
 {
 	int i;
 
@@ -902,7 +903,7 @@ void klatt::initsynth(int aElementCount,unsigned char *aElement)
 	mStressE.mValue = 0.0;
 }
 
-int klatt::synth(int aSampleCount, short *aSamplePointer)
+int klatt::synth(int /* aSampleCount */, short *aSamplePointer)
 {
 	short *samp = aSamplePointer;
 
@@ -956,7 +957,6 @@ int klatt::synth(int aSampleCount, short *aSamplePointer)
 		{
 			float base = mTop * 0.8f; // 3 * top / 5 
 			float tp[ELM_COUNT];
-			int j;
 
 			if (mTStress == mNTStress)
 			{
@@ -998,6 +998,7 @@ int klatt::synth(int aSampleCount, short *aSamplePointer)
 				}
 			}
 
+			int j;
 			for (j = 0; j < ELM_COUNT; j++)
 			{
 				tp[j] = interpolate(&start[j], &end[j], (float) currentElement->mInterpolator[j].mSteady, t, dur);

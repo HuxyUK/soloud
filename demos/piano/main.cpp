@@ -39,10 +39,7 @@ freely, subject to the following restrictions:
 #include "soloud_lofifilter.h"
 #include "soloud_dcremovalfilter.h"
 
-#ifdef USE_PORTMIDI
-#include "portmidi.h"
-#include <windows.h>
-#endif
+#include "RtMidi.h"
 
 struct plonked
 {
@@ -71,9 +68,7 @@ int gFilterSelect = 0;
 int gEcho = 0;
 char *gInfo = (char*)"";
 
-#ifdef USE_PORTMIDI
-PmStream *midi = NULL;
-#endif
+RtMidiIn *midi = NULL;
 
 void plonk(float rel, float vol = 0x50)
 {
@@ -138,30 +133,61 @@ void say(const char *text)
 	gSoloud.play(gSpeech, 4);
 }
 
-
-#ifdef USE_PORTMIDI
-PmEvent buffer[1];
-#endif
-
 float harm[7] = { 0.7f, 0.3f, 0.2f, 1.7f, 0.4f, 1.3f, 0.2f };
 float bw = 0.25f;
 float bws = 1.0f;
 
 int bushandle;
 
+void midicallback(double deltatime, std::vector< unsigned char > *message, void *userData)
+{
+	if (((*message)[0] & 0xf0) == 0x90)
+	{
+		// some keyboards send volume 0 play instead of note off..
+		if (((*message)[2]) != 0)
+		{
+			plonk((float)pow(0.943875f, 0x3c - (*message)[1]), (float)(*message)[2]);
+		}
+		else
+		{
+			unplonk((float)pow(0.943875f, 0x3c - (*message)[1]));
+		}
+	}
+	// note off
+	if (((*message)[0] & 0xf0) == 0x80)
+	{
+		unplonk((float)pow(0.943875f, 0x3c - (*message)[1]));
+	}
+	// aftertouch
+	if (((*message)[0] & 0xf0) == 0xd0)
+	{
+		replonk((float)(*message)[1]);
+	}
+}
+
 int DemoEntry(int argc, char *argv[])
 {
 
-#ifdef USE_PORTMIDI
-	Pm_OpenInput(&midi, Pm_GetDefaultInputDeviceID(), NULL, 100, NULL, NULL);
-	if (midi)
+	try
 	{
-		Pm_SetFilter(midi, PM_FILT_REALTIME);
-		while (Pm_Poll(midi)) {
-			Pm_Read(midi, buffer, 1);
+		midi = new RtMidiIn();
+	}
+	catch (RtMidiError &error)
+	{
+		error.printMessage();
+		exit(EXIT_FAILURE);
+	}
+
+	unsigned int nPorts = midi->getPortCount();
+	if (nPorts > 0)
+	{
+		midi->openPort();
+		if (midi->isPortOpen())
+		{
+			midi->setCallback(midicallback);
+			midi->ignoreTypes(false, true, false);
 		}
 	}
-#endif
 
 	gSoloud.init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION);
 	gSoloud.setGlobalVolume(0.75);
@@ -206,44 +232,6 @@ void DemoMainloop()
 	gSoloud.setFilterParameter(bushandle, 0, 2, filter_param2[0]);
 
 
-#ifdef USE_PORTMIDI
-	if (midi)
-	{
-		int i = Pm_Poll(midi);
-		if (i)
-		{
-			i = Pm_Read(midi, buffer, 1);
-			if (i)
-			{
-				char temp[200];
-				sprintf(temp, "\n%x %x %x", Pm_MessageStatus(buffer[0].message), Pm_MessageData1(buffer[0].message), Pm_MessageData2(buffer[0].message));
-				OutputDebugStringA(temp);
-				if (Pm_MessageStatus(buffer[0].message) == 0x90)
-				{
-					// some keyboards send volume 0 play instead of note off..
-					if (Pm_MessageData2(buffer[0].message) != 0)
-					{
-						plonk((float)pow(0.943875f, 0x3c - Pm_MessageData1(buffer[0].message)), (float)Pm_MessageData2(buffer[0].message));
-					}
-					else
-					{
-						unplonk((float)pow(0.943875f, 0x3c - Pm_MessageData1(buffer[0].message)));
-					}
-				}
-				// note off
-				if (Pm_MessageStatus(buffer[0].message) == 0x80)
-				{
-					unplonk((float)pow(0.943875f, 0x3c - Pm_MessageData1(buffer[0].message)));
-				}
-				// aftertouch
-				if (Pm_MessageStatus(buffer[0].message) == 0xd0)
-				{
-					replonk((float)Pm_MessageData1(buffer[0].message));
-				}
-			}
-		}
-	}
-#endif
 #define NOTEKEY(x, p)\
 	if (gPressed[x] && !gWasPressed[x]) { plonk((float)pow(0.943875f, p)); gWasPressed[x] = 1; } \
 	if (!gPressed[x] && gWasPressed[x]) { unplonk((float)pow(0.943875f, p)); gWasPressed[x] = 0; }
@@ -354,21 +342,21 @@ void DemoMainloop()
 		if (ImGui::RadioButton("Lowpass", gFilterSelect == 1))
 		{
 			gFilterSelect = 1;
-			gBQRFilter.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 44100, 1000, 2);
+			gBQRFilter.setParams(SoLoud::BiquadResonantFilter::LOWPASS, 1000, 2);
 			gBus.setFilter(2, &gBQRFilter);
 			say("Low pass filter");
 		}
 		if (ImGui::RadioButton("Highpass", gFilterSelect == 2))
 		{
 			gFilterSelect = 2;
-			gBQRFilter.setParams(SoLoud::BiquadResonantFilter::HIGHPASS, 44100, 1000, 2);
+			gBQRFilter.setParams(SoLoud::BiquadResonantFilter::HIGHPASS, 1000, 2);
 			gBus.setFilter(2, &gBQRFilter);
 			say("High pass filter");
 		}
 		if (ImGui::RadioButton("Bandpass", gFilterSelect == 3))
 		{
 			gFilterSelect = 3;
-			gBQRFilter.setParams(SoLoud::BiquadResonantFilter::BANDPASS, 44100, 1000, 2);
+			gBQRFilter.setParams(SoLoud::BiquadResonantFilter::BANDPASS, 1000, 2);
 			gBus.setFilter(2, &gBQRFilter);
 			say("Band pass filter");
 		}
