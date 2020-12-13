@@ -54,9 +54,9 @@ namespace SoLoud
 		BiquadResonantFilter *mParent;
 		void calcBQRParams();
 	public:
-		virtual void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		virtual ~BiquadResonantFilterInstance();
-		BiquadResonantFilterInstance(BiquadResonantFilter *aParent);
+		void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels) override;
+		~BiquadResonantFilterInstance() override;
+		explicit BiquadResonantFilterInstance(BiquadResonantFilter *aParent);
 	};
 
 	class BiquadResonantFilter : public Filter
@@ -78,16 +78,16 @@ namespace SoLoud
 		int mFilterType;
 		float mFrequency;
 		float mResonance;
-		virtual int getParamCount();
-		virtual const char* getParamName(unsigned int aParamIndex);
-		virtual unsigned int getParamType(unsigned int aParamIndex);
-		virtual float getParamMax(unsigned int aParamIndex);
-		virtual float getParamMin(unsigned int aParamIndex);
+		int getParamCount() override;
+		const char* getParamName(unsigned int aParamIndex) override;
+		unsigned int getParamType(unsigned int aParamIndex) override;
+		float getParamMax(unsigned int aParamIndex) override;
+		float getParamMin(unsigned int aParamIndex) override;
 
-		virtual BiquadResonantFilterInstance *createInstance();
+		BiquadResonantFilterInstance *createInstance() override;
 		BiquadResonantFilter();
 		result setParams(int aType, float aFrequency, float aResonance);
-		virtual ~BiquadResonantFilter();
+		~BiquadResonantFilter() override;
 	};
 }
 

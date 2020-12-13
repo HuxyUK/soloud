@@ -35,15 +35,15 @@ namespace SoLoud
 	class NoiseInstance : public AudioSourceInstance
 	{
 	public:
-		NoiseInstance(Noise *aParent);
-		~NoiseInstance();
+		explicit NoiseInstance(Noise *aParent);
+		~NoiseInstance() override;
 
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual bool hasEnded();
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		bool hasEnded() override;
 
 	public:
-		float mOctaveScale[10];
-	    Misc::Prg mPrg;
+		std::array<float,10> mOctaveScale;
+    Misc::Prg mPrg;
 	};
 
 	class Noise : public AudioSource
@@ -63,11 +63,11 @@ namespace SoLoud
 		void setOctaveScale(float aOct0, float aOct1, float aOct2, float aOct3, float aOct4, float aOct5, float aOct6, float aOct7, float aOct8, float aOct9);
 		void setType(int aType);
 
-		virtual ~Noise();
+		~Noise() override;
 		
 	public:
-		virtual AudioSourceInstance *createInstance();
-		float mOctaveScale[10];
+		AudioSourceInstance *createInstance() override;
+		std::array<float,10> mOctaveScale;
 	};
 };
 

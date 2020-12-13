@@ -53,7 +53,8 @@ namespace SoLoud
 		class PoolTask
 		{
 		public:
-			virtual void work() = 0;
+      virtual ~PoolTask() = default;
+      virtual void work() = 0;
 		};
 
 		class Pool

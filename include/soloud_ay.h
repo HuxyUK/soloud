@@ -40,12 +40,12 @@ namespace SoLoud
 		ChipPlayer *mChip;
 		int mPos;
 
-		AyInstance(Ay *aParent);
-		~AyInstance();
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual bool hasEnded();
-		virtual result rewind();
-		virtual float getInfo(unsigned int aInfoKey);
+		explicit AyInstance(Ay *aParent);
+		~AyInstance() override;
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		bool hasEnded() override;
+		result rewind() override;
+		float getInfo(unsigned int aInfoKey) override;
 	};
 
 	class Ay : public AudioSource
@@ -59,11 +59,11 @@ namespace SoLoud
 		unsigned short* mOps;
 	public:
 		Ay();
-		~Ay();
+		~Ay() override;
 		result load(const char *aFilename);
 		result loadFile(File *aFile);
 		result loadMem(const unsigned char* aMem, unsigned int aLength, bool aCopy, bool aTakeOwnership);
-		virtual AudioSourceInstance *createInstance();
+		AudioSourceInstance *createInstance() override;
 	};
 };
 

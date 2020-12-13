@@ -40,18 +40,18 @@ namespace SoLoud
 		int mOffset;
 
 	public:
-		virtual void filter(float *aBuffer, unsigned int aSamples, unsigned int aBufferSize, unsigned int aChannels, float aSamplerate, time aTime);
-		virtual ~DCRemovalFilterInstance();
-		DCRemovalFilterInstance(DCRemovalFilter *aParent);
+		void filter(float *aBuffer, unsigned int aSamples, unsigned int aBufferSize, unsigned int aChannels, float aSamplerate, time aTime) override;
+		~DCRemovalFilterInstance() override;
+		explicit DCRemovalFilterInstance(DCRemovalFilter *aParent);
 	};
 
 	class DCRemovalFilter : public Filter
 	{
 	public:
 		float mLength;
-		virtual FilterInstance *createInstance();
+		FilterInstance *createInstance() override;
 		DCRemovalFilter();
-		result setParams(float aLength = 0.1f);
+		result setParams(float aLength = 0.1F);
 	};
 }
 

@@ -43,8 +43,8 @@ namespace SoLoud
 		};
 		RobotizeFilter *mParent;
 	public:
-		virtual void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		RobotizeFilterInstance(RobotizeFilter *aParent);
+		void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels) override;
+		explicit RobotizeFilterInstance(RobotizeFilter *aParent);
 	};
 
 	class RobotizeFilter : public Filter
@@ -58,13 +58,13 @@ namespace SoLoud
 		};
 		float mFreq;
 		int mWave;
-		virtual int getParamCount();
-		virtual const char* getParamName(unsigned int aParamIndex);
-		virtual unsigned int getParamType(unsigned int aParamIndex);
-		virtual float getParamMax(unsigned int aParamIndex);
-		virtual float getParamMin(unsigned int aParamIndex);
+		int getParamCount() override;
+		const char* getParamName(unsigned int aParamIndex) override;
+		unsigned int getParamType(unsigned int aParamIndex) override;
+		float getParamMax(unsigned int aParamIndex) override;
+		float getParamMin(unsigned int aParamIndex) override;
 		void setParams(float aFreq, int aWaveform);
-		virtual FilterInstance *createInstance();
+		FilterInstance *createInstance() override;
 		RobotizeFilter();
 	};
 }

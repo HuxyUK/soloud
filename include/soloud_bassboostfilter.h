@@ -41,8 +41,8 @@ namespace SoLoud
 		};
 		BassboostFilter *mParent;
 	public:
-		virtual void fftFilterChannel(float *aFFTBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		BassboostFilterInstance(BassboostFilter *aParent);
+		void fftFilterChannel(float *aFFTBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels) override;
+		explicit BassboostFilterInstance(BassboostFilter *aParent);
 	};
 
 	class BassboostFilter : public FFTFilter
@@ -53,14 +53,14 @@ namespace SoLoud
 			WET = 0,
 			BOOST = 1
 		};
-		virtual int getParamCount();
-		virtual const char* getParamName(unsigned int aParamIndex);
-		virtual unsigned int getParamType(unsigned int aParamIndex);
-		virtual float getParamMax(unsigned int aParamIndex);
-		virtual float getParamMin(unsigned int aParamIndex);
+		int getParamCount() override;
+		const char* getParamName(unsigned int aParamIndex) override;
+		unsigned int getParamType(unsigned int aParamIndex) override;
+		float getParamMax(unsigned int aParamIndex) override;
+		float getParamMin(unsigned int aParamIndex) override;
 		float mBoost;
 		result setParams(float aBoost);
-		virtual FilterInstance *createInstance();
+		FilterInstance *createInstance() override;
 		BassboostFilter();
 	};
 }

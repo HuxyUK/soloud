@@ -55,9 +55,9 @@ namespace SoLoud
 		darray mElement;
 		Speech();
 		result setText(const char *aText);
-		result setParams(unsigned int aBaseFrequency = 1330, float aBaseSpeed = 10.0f, float aBaseDeclination = 0.5f, int aBaseWaveform = KW_TRIANGLE);
-		virtual ~Speech();
-		virtual AudioSourceInstance *createInstance();
+		result setParams(unsigned int aBaseFrequency = 1330, float aBaseSpeed = 10.0F, float aBaseDeclination = 0.5F, int aBaseWaveform = KW_TRIANGLE);
+		~Speech() override;
+		AudioSourceInstance *createInstance() override;
 	};
 
 	class SpeechInstance : public AudioSourceInstance
@@ -68,12 +68,13 @@ namespace SoLoud
 		int mSampleCount;
 		int mOffset;
 	public:
-		SpeechInstance(Speech *aParent);
-        virtual ~SpeechInstance();
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual result rewind();
-		virtual bool hasEnded();
+		explicit SpeechInstance(Speech *aParent);
+    ~SpeechInstance() override;
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		result rewind() override;
+		bool hasEnded() override;
 	};
 };
 
 #endif
+

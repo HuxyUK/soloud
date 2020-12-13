@@ -35,9 +35,9 @@ namespace SoLoud
 	{	
 		WaveShaperFilter *mParent;
 	public:
-		virtual void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		virtual ~WaveShaperFilterInstance();
-		WaveShaperFilterInstance(WaveShaperFilter *aParent);
+		void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels) override;
+		~WaveShaperFilterInstance() override;
+		explicit WaveShaperFilterInstance(WaveShaperFilter *aParent);
 	};
 
 	class WaveShaperFilter : public Filter
@@ -48,15 +48,15 @@ namespace SoLoud
 			AMOUNT
 		};
 		float mAmount;
-		virtual WaveShaperFilterInstance *createInstance();
+		WaveShaperFilterInstance *createInstance() override;
 		result setParams(float aAmount);
 		WaveShaperFilter();
-		virtual ~WaveShaperFilter();
-		virtual int getParamCount();
-		virtual const char* getParamName(unsigned int aParamIndex);
-		virtual unsigned int getParamType(unsigned int aParamIndex);
-		virtual float getParamMax(unsigned int aParamIndex);
-		virtual float getParamMin(unsigned int aParamIndex);
+		~WaveShaperFilter() override;
+		int getParamCount() override;
+		const char* getParamName(unsigned int aParamIndex) override;
+		unsigned int getParamType(unsigned int aParamIndex) override;
+		float getParamMax(unsigned int aParamIndex) override;
+    float getParamMin(unsigned int aParamIndex) override;
 	};
 }
 

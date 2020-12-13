@@ -37,21 +37,21 @@ namespace SoLoud
 	{
 		Queue *mParent;
 	public:
-		QueueInstance(Queue *aParent);
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual bool hasEnded();
-		virtual ~QueueInstance();
+		explicit QueueInstance(Queue *aParent);
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		bool hasEnded() override;
+		~QueueInstance() override;
 	};
 
 	class Queue : public AudioSource
 	{
 	public:
 		Queue();
-		virtual QueueInstance *createInstance();
+		QueueInstance *createInstance() override;
 		// Play sound through the queue
 		result play(AudioSource &aSound);
-        // Number of audio sources queued for replay
-        unsigned int getQueueCount();
+    // Number of audio sources queued for replay
+    unsigned int getQueueCount();
 		// Is this audio source currently playing?
 		bool isCurrentlyPlaying(AudioSource &aSound);
 		// Set params by reading them from an audio source
@@ -60,8 +60,8 @@ namespace SoLoud
 		result setParams(float aSamplerate, unsigned int aChannels = 2);
 		
 	public:
-	    unsigned int mReadIndex, mWriteIndex, mCount;
-	    AudioSourceInstance *mSource[SOLOUD_QUEUE_MAX];
+	  unsigned int mReadIndex, mWriteIndex, mCount;
+	  AudioSourceInstance *mSource[SOLOUD_QUEUE_MAX];
 		QueueInstance *mInstance;
 		handle mQueueHandle;
 		void findQueueHandle();

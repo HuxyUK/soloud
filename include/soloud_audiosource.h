@@ -38,13 +38,17 @@ namespace SoLoud
 	class AudioCollider
 	{
 	public:
-		// Calculate volume multiplier. Assumed to return value between 0 and 1.
+    AudioCollider() = default;
+    virtual ~AudioCollider() = default;
+    // Calculate volume multiplier. Assumed to return value between 0 and 1.
 		virtual float collide(Soloud *aSoloud, AudioSourceInstance3dData *aAudioInstance3dData,	int aUserData) = 0;
 	};
 
 	class AudioAttenuator
 	{
 	public:
+    AudioAttenuator() = default;
+    virtual ~AudioAttenuator() = default;
 		virtual float attenuate(float aDistance, float aMinDistance, float aMaxDistance, float aRolloffFactor) = 0;
 	};
 

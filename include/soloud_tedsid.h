@@ -42,15 +42,15 @@ namespace SoLoud
 		TED *mTED;
 		int mPos;
 		unsigned int mSampleCount;
-		int mRegValues[128];
+		std::array<int,128> mRegValues;
 	public:
 
-		TedSidInstance(TedSid *aParent);
-		~TedSidInstance();
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
+		explicit TedSidInstance(TedSid *aParent);
+		~TedSidInstance() override;
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
 		virtual void tick();
-		virtual bool hasEnded();
-		virtual float getInfo(unsigned int aInfoKey);
+    bool hasEnded() override;
+		float getInfo(unsigned int aInfoKey) override;
 	};
 
 	class TedSid : public AudioSource
@@ -61,11 +61,11 @@ namespace SoLoud
 		unsigned short* mOps;
 		int mModel;
 		TedSid();
-		~TedSid();
+		~TedSid() override;
 		result load(const char *aFilename);
 		result loadMem(const unsigned char *aMem, unsigned int aLength, bool aCopy = false, bool aTakeOwnership = true);
 		result loadFile(File *aFile);
-		virtual AudioSourceInstance *createInstance();
+		AudioSourceInstance *createInstance() override;
 	};
 };
 

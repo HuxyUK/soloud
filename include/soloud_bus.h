@@ -26,6 +26,7 @@ freely, subject to the following restrictions:
 #define SOLOUD_BUS_H
 
 #include "soloud.h"
+#include <array>
 
 namespace SoLoud
 {
@@ -36,33 +37,34 @@ namespace SoLoud
 		Bus *mParent;
 		unsigned int mScratchSize;
 		AlignedFloatBuffer mScratch;
+
 	public:
 		// Approximate volume for channels.
-		float mVisualizationChannelVolume[MAX_CHANNELS];
+		std::array<float, MAX_CHANNELS> mVisualizationChannelVolume;
 		// Mono-mixed wave data for visualization and for visualization FFT input
-		float mVisualizationWaveData[256];
+		std::array<float, 256> mVisualizationWaveData;
 
-		BusInstance(Bus *aParent);
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual bool hasEnded();
-		virtual ~BusInstance();
+		explicit BusInstance(Bus *aParent);
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		bool hasEnded() override;
+		~BusInstance() override;
 	};
 
 	class Bus : public AudioSource
 	{
 	public:
 		Bus();
-		virtual BusInstance *createInstance();
+		BusInstance *createInstance() override;
 		// Set filter. Set to NULL to clear the filter.
-		virtual void setFilter(unsigned int aFilterId, Filter *aFilter);
+		void setFilter(unsigned int aFilterId, Filter *aFilter) override;
 		// Play sound through the bus
-		handle play(AudioSource &aSound, float aVolume = 1.0f, float aPan = 0.0f, bool aPaused = 0);
+		handle play(AudioSource &aSound, float aVolume = 1.0F, float aPan = 0.0F, bool aPaused = false);
 		// Play sound through the bus, delayed in relation to other sounds called via this function.
-		handle playClocked(time aSoundTime, AudioSource &aSound, float aVolume = 1.0f, float aPan = 0.0f);
+		handle playClocked(time aSoundTime, AudioSource &aSound, float aVolume = 1.0F, float aPan = 0.0F);
 		// Start playing a 3d audio source through the bus
-		handle play3d(AudioSource &aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f, bool aPaused = 0);
+		handle play3d(AudioSource &aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0F, float aVelY = 0.0F, float aVelZ = 0.0F, float aVolume = 1.0F, bool aPaused = false);
 		// Start playing a 3d audio source through the bus, delayed in relation to other sounds called via this function.
-		handle play3dClocked(time aSoundTime, AudioSource &aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0f, float aVelY = 0.0f, float aVelZ = 0.0f, float aVolume = 1.0f);
+		handle play3dClocked(time aSoundTime, AudioSource &aSound, float aPosX, float aPosY, float aPosZ, float aVelX = 0.0F, float aVelY = 0.0F, float aVelZ = 0.0F, float aVolume = 1.0F);
 		// Set number of channels for the bus (default 2)
 		result setChannels(unsigned int aChannels);
 		// Enable or disable visualization data gathering

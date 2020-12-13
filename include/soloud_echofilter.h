@@ -39,9 +39,9 @@ namespace SoLoud
 		int mOffset;
 
 	public:
-		virtual void filter(float *aBuffer, unsigned int aSamples, unsigned int aBufferSize, unsigned int aChannels, float aSamplerate, time aTime);
-		virtual ~EchoFilterInstance();
-		EchoFilterInstance(EchoFilter *aParent);
+		void filter(float *aBuffer, unsigned int aSamples, unsigned int aBufferSize, unsigned int aChannels, float aSamplerate, time aTime) override;
+		~EchoFilterInstance() override;
+		explicit EchoFilterInstance(EchoFilter *aParent);
 	};
 
 	class EchoFilter : public Filter
@@ -57,14 +57,14 @@ namespace SoLoud
 		float mDelay;
 		float mDecay;
 		float mFilter;
-		virtual int getParamCount();
-		virtual const char* getParamName(unsigned int aParamIndex);
-		virtual unsigned int getParamType(unsigned int aParamIndex);
-		virtual float getParamMax(unsigned int aParamIndex);
-		virtual float getParamMin(unsigned int aParamIndex);
-		virtual FilterInstance *createInstance();
+		int getParamCount() override;
+		const char* getParamName(unsigned int aParamIndex) override;
+		unsigned int getParamType(unsigned int aParamIndex) override;
+		float getParamMax(unsigned int aParamIndex) override;
+		float getParamMin(unsigned int aParamIndex) override;
+		FilterInstance *createInstance() override;
 		EchoFilter();
-		result setParams(float aDelay, float aDecay = 0.7f, float aFilter = 0.0f);
+		result setParams(float aDelay, float aDecay = 0.7F, float aFilter = 0.0F);
 	};
 }
 

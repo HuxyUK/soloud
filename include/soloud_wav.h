@@ -40,10 +40,10 @@ namespace SoLoud
 		Wav *mParent;
 		unsigned int mOffset;
 	public:
-		WavInstance(Wav *aParent);
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual result rewind();
-		virtual bool hasEnded();
+		explicit WavInstance(Wav *aParent) ;
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		result rewind() override;
+		bool hasEnded() override;
 	};
 
 	class Wav : public AudioSource
@@ -58,15 +58,15 @@ namespace SoLoud
 		unsigned int mSampleCount;
 
 		Wav();
-		virtual ~Wav();
+		~Wav() override;
 		result load(const char *aFilename);
 		result loadMem(const unsigned char *aMem, unsigned int aLength, bool aCopy = false, bool aTakeOwnership = true);
 		result loadFile(File *aFile);
-		result loadRawWave8(unsigned char *aMem, unsigned int aLength, float aSamplerate = 44100.0f, unsigned int aChannels = 1);
-		result loadRawWave16(short *aMem, unsigned int aLength, float aSamplerate = 44100.0f, unsigned int aChannels = 1);
-		result loadRawWave(float *aMem, unsigned int aLength, float aSamplerate = 44100.0f, unsigned int aChannels = 1, bool aCopy = false, bool aTakeOwnership = true);
+		result loadRawWave8(unsigned char *aMem, unsigned int aLength, float aSamplerate = 44100.0F, unsigned int aChannels = 1);
+		result loadRawWave16(short *aMem, unsigned int aLength, float aSamplerate = 44100.0F, unsigned int aChannels = 1);
+		result loadRawWave(float *aMem, unsigned int aLength, float aSamplerate = 44100.0F, unsigned int aChannels = 1, bool aCopy = false, bool aTakeOwnership = true);
 
-		virtual AudioSourceInstance *createInstance();
+		AudioSourceInstance *createInstance() override;
 		time getLength();
 	};
 };

@@ -35,7 +35,7 @@ namespace SoLoud
 	class File
 	{
 	public:
-		virtual ~File() {}
+		virtual ~File() = default;
 		unsigned int read8();
 		unsigned int read16();
 		unsigned int read32();
@@ -44,8 +44,8 @@ namespace SoLoud
 		virtual unsigned int length() = 0;
 		virtual void seek(int aOffset) = 0;
 		virtual unsigned int pos() = 0;
-		virtual FILE * getFilePtr() { return 0; }
-		virtual const unsigned char * getMemPtr() { return 0; }
+		virtual FILE * getFilePtr() { return nullptr; }
+		virtual const unsigned char * getMemPtr() { return nullptr; }
 	};
 
 	class DiskFile : public File
@@ -53,16 +53,16 @@ namespace SoLoud
 	public:
 		FILE *mFileHandle;
 
-		virtual int eof();
-		virtual unsigned int read(unsigned char *aDst, unsigned int aBytes);
-		virtual unsigned int length();
-		virtual void seek(int aOffset);
-		virtual unsigned int pos();
-		virtual ~DiskFile();
+		int eof() override;
+		unsigned int read(unsigned char *aDst, unsigned int aBytes) override;
+		unsigned int length() override;
+		void seek(int aOffset) override;
+		unsigned int pos() override;
+		~DiskFile() override;
 		DiskFile();
-		DiskFile(FILE *fp);
+		explicit DiskFile(FILE *fp);
 		result open(const char *aFilename);
-		virtual FILE * getFilePtr();
+		FILE * getFilePtr() override;
 	};
 
 	class MemoryFile : public File
@@ -73,13 +73,13 @@ namespace SoLoud
 		unsigned int mOffset;
 		bool mDataOwned;
 
-		virtual int eof();
-		virtual unsigned int read(unsigned char *aDst, unsigned int aBytes);
-		virtual unsigned int length();
-		virtual void seek(int aOffset);
-		virtual unsigned int pos();
-		virtual const unsigned char * getMemPtr();
-		virtual ~MemoryFile();
+		int eof() override;
+		unsigned int read(unsigned char *aDst, unsigned int aBytes) override;
+		unsigned int length() override;
+		void seek(int aOffset) override;
+		unsigned int pos() override;
+		const unsigned char * getMemPtr() override;
+		~MemoryFile() override;
 		MemoryFile();
 		result openMem(const unsigned char *aData, unsigned int aDataLength, bool aCopy=false, bool aTakeOwnership=true);
 		result openToMem(const char *aFilename);

@@ -41,10 +41,10 @@ namespace SoLoud
 	{
 	public:
 		VizsnInstance(Vizsn *aParent);
-		~VizsnInstance();
+		~VizsnInstance() override;
 
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual bool hasEnded();
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		bool hasEnded() override;
 
     public:
         Vizsn *mParent;
@@ -74,11 +74,12 @@ namespace SoLoud
 	public:
 		char *mText;
 		Vizsn();
-		virtual ~Vizsn();
+		~Vizsn() override;
 		void setText(char *aText);
 	public:
-		virtual AudioSourceInstance *createInstance();
+		AudioSourceInstance *createInstance() override;
 	};
 };
 
 #endif
+

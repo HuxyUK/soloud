@@ -38,15 +38,15 @@ namespace SoLoud
 		float *mMixBuffer;
 		float *mLastPhase;
 		float *mSumPhase;
-		unsigned int mInputOffset[MAX_CHANNELS];
-		unsigned int mMixOffset[MAX_CHANNELS];
-		unsigned int mReadOffset[MAX_CHANNELS];
+		std::array<unsigned int, MAX_CHANNELS> mInputOffset;
+		std::array<unsigned int, MAX_CHANNELS> mMixOffset;
+		std::array<unsigned int, MAX_CHANNELS> mReadOffset;
 		FFTFilter *mParent;
 	public:
 		virtual void fftFilterChannel(float *aFFTBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		virtual void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		virtual ~FFTFilterInstance();
-		FFTFilterInstance(FFTFilter *aParent);
+		void filterChannel(float *aBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels) override;
+		~FFTFilterInstance() override;
+		explicit FFTFilterInstance(FFTFilter *aParent);
 		FFTFilterInstance();
 		void comp2MagPhase(float* aFFTBuffer, unsigned int aSamples);
 		void magPhase2MagFreq(float* aFFTBuffer, unsigned int aSamples, float aSamplerate, unsigned int aChannel);
@@ -58,7 +58,7 @@ namespace SoLoud
 	class FFTFilter : public Filter
 	{
 	public:
-		virtual FilterInstance *createInstance();
+		FilterInstance *createInstance() override;
 		FFTFilter();
 	};
 }

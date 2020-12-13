@@ -60,4 +60,4 @@ namespace SoLoud
 	}; 
 };
 
-#endif 
+#endif

@@ -60,11 +60,11 @@ namespace SoLoud
 		unsigned int mOggFrameOffset;
 		float **mOggOutputs;
 	public:
-		WavStreamInstance(WavStream *aParent);
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize);
-		virtual result rewind();
-		virtual bool hasEnded();
-		virtual ~WavStreamInstance();
+		explicit WavStreamInstance(WavStream *aParent);
+		unsigned int getAudio(float *aBuffer, unsigned int aSamplesToRead, unsigned int aBufferSize) override;
+		result rewind() override;
+		bool hasEnded() override;
+		~WavStreamInstance() override;
 	};
 
 	enum WAVSTREAM_FILETYPE
@@ -89,13 +89,13 @@ namespace SoLoud
 		unsigned int mSampleCount;
 
 		WavStream();
-		virtual ~WavStream();
+		~WavStream() override;
 		result load(const char *aFilename);
 		result loadMem(const unsigned char *aData, unsigned int aDataLen, bool aCopy = false, bool aTakeOwnership = true);
 		result loadToMem(const char *aFilename);
 		result loadFile(File *aFile);
 		result loadFileToMem(File *aFile);		
-		virtual AudioSourceInstance *createInstance();
+		AudioSourceInstance *createInstance() override;
 		time getLength();
 
 	public:

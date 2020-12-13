@@ -48,8 +48,8 @@ namespace SoLoud
 		};
 		EqFilter *mParent;
 	public:
-		virtual void fftFilterChannel(float *aFFTBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels);
-		EqFilterInstance(EqFilter *aParent);
+		void fftFilterChannel(float *aFFTBuffer, unsigned int aSamples, float aSamplerate, time aTime, unsigned int aChannel, unsigned int aChannels) override;
+		explicit EqFilterInstance(EqFilter *aParent);
 	};
 
 	class EqFilter : public FFTFilter
@@ -67,14 +67,14 @@ namespace SoLoud
 			BAND7 = 7,
 			BAND8 = 8
 		};
-		virtual int getParamCount();
-		virtual const char* getParamName(unsigned int aParamIndex);
-		virtual unsigned int getParamType(unsigned int aParamIndex);
-		virtual float getParamMax(unsigned int aParamIndex);
-		virtual float getParamMin(unsigned int aParamIndex);
+		int getParamCount() override;
+	  const char* getParamName(unsigned int aParamIndex) override;
+		unsigned int getParamType(unsigned int aParamIndex) override;
+		float getParamMax(unsigned int aParamIndex) override;
+		float getParamMin(unsigned int aParamIndex) override;
 		float mVolume[8];
 		result setParam(unsigned int aBand, float aVolume);
-		virtual FilterInstance *createInstance();
+		FilterInstance *createInstance() override;
 		EqFilter();
 	};
 }

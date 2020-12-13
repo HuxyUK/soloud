@@ -72,8 +72,8 @@ namespace SoLoud
 	{
 		Monotone *mParent;		
 	public:
-		MonotoneChannel mChannel[12];
-		MonotoneHardwareChannel mOutput[12];
+		std::array<MonotoneChannel, 12> mChannel;
+		std::array<MonotoneHardwareChannel, 12> mOutput;
 		int mNextChannel;
 		int mTempo; // ticks / row. Tick = 60hz. Default 4.
 		int mOrder;
@@ -81,27 +81,27 @@ namespace SoLoud
 		int mSampleCount;
 		int mRowTick;
 
-		MonotoneInstance(Monotone *aParent);
-		virtual unsigned int getAudio(float *aBuffer, unsigned int aSamples, unsigned int aBufferSize);
-		virtual bool hasEnded();
+		explicit MonotoneInstance(Monotone *aParent);
+		unsigned int getAudio(float *aBuffer, unsigned int aSamples, unsigned int aBufferSize) override;
+		bool hasEnded() override;
 	};
 
 	class Monotone : public AudioSource
 	{
 	public:
 		
-		int mNotesHz[800];
-		int mVibTable[32];
+		std::array<int, 800> mNotesHz;
+		std::array<int, 32> mVibTable;
 		int mHardwareChannels;
 		int mWaveform;
 		MonotoneSong mSong;
 		Monotone();
-		~Monotone();
+		~Monotone() override;
 		result setParams(int aHardwareChannels, int aWaveform = Soloud::WAVE_SQUARE);
 		result load(const char *aFilename);
 		result loadMem(const unsigned char *aMem, unsigned int aLength, bool aCopy = false, bool aTakeOwnership = true);
 		result loadFile(File *aFile);
-		virtual AudioSourceInstance *createInstance();
+		AudioSourceInstance *createInstance() override;
 	public:
 		void clear();
 	};
